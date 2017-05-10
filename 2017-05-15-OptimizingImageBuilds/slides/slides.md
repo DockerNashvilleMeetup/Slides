@@ -1,15 +1,36 @@
-layout: true
+class: top
+background-image: url('./slides/images/slide-bg-1.png')
+background-size: contain
 
-background-image: url(https://raw.githubusercontent.com/DockerNashvilleMeetup/Slides/master/docker-nash-logo.png)
-background-size: 64px
-background-position: right 12px bottom 40px
+# About Me
+
+* Organizer for Nashville Docker and Nashville Go Meetups
+* Middle Tennessee Native
+* Senior Innovation Engineer @ Franklin American Mortgage Company
+* Docker user since 2014; putting Docker systems in production since 2015
+* I enjoy cycling, competitive shooting, and board games
 
 ---
-class: middle, center
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
 
-![](https://raw.githubusercontent.com/DockerNashvilleMeetup/Slides/master/docker-nash-logo.png)
+# Agenda
 
-# Docker Nashville Meetup
+* What are layers? How do they work?
+* Tips for building minimal images
+* Dockerfiles: 
+* Docker Security Scan
+* The Future
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+# What are Layers?
+
+<img src="./slides/images/container-layers-cas.jpg">
 
 ---
 
