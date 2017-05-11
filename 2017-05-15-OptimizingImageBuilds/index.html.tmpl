@@ -7,6 +7,7 @@
   </head>
   <body>
     <script src="remark-{{getenv "REMARK_VER"}}.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script>
       var slideshow = remark.create({
         sourceUrl: 'slides/slides.md?' + Math.random(),
@@ -21,5 +22,18 @@
         highlightLines: {{getenv "HIGHLIGHT_LINES" "false"}}
       })
     </script>
+    <script>
+      function Get(url) {
+        jQuery.getJSON(url, function(data) {
+          document.getElementById("exchrate").textContent = data.USD.last.toFixed(2);
+        })
+      }
+      $(document).ready(function() {
+        var interval = setInterval(function() {
+          Get("https://blockchain.info/ticker?cors=true");
+        }, 5000);
+        Get("https://blockchain.info/ticker?cors=true");
+      });
+  </script>
   </body>
 </html>

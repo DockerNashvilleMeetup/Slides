@@ -18,9 +18,11 @@ font-family: 'Comfortaa';
     font-size: 12pt;
     right: 8px;
     opacity: .7;
+    text-shadow: 0px 0px 4px #000000;
 }
 
-.remark-notes p, .remark-notes li {
+.remark-notes p, .remark-notes li,
+.remark-notes-preview p, .remark-notes-preview li {
     font-size: 14pt;
     line-height: normal;
     font-family: 'Monospace';
