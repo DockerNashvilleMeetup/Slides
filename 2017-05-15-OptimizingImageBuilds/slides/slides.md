@@ -19,9 +19,9 @@ background-size: contain
 
 * What are layers? How do they work?
 * Tips for building minimal images
-* Dockerfiles: 
+* Dockerfiles: The Past and The Future
 * Docker Security Scan
-* The Future
+* Q&A + Docker Nashville Meetups
 
 ---
 class: top
@@ -66,3 +66,55 @@ background-size: contain
 * Chain your RUN statements
 * Defer cache misses until the last mile
 * Use multi-stage builds!
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Dockerfile: The Past
+
+```
+FROM registry.hub.docker.com/library/nginx:1.13.0-alpine
+
+RUN apk add --update nodejs && npm install npm@latest -g
+WORKDIR /root/single-ui-fan
+
+COPY maven/. .
+
+RUN npm set progress=false && npm config set depth 0 && \
+    npm install && npm run build:prod && \
+    cp -R ./dist/* /usr/share/nginx/html && \
+    cd / && rm -rf /root/single-ui-fan
+
+WORKDIR /usr/share/nginx/html
+
+COPY entrypoint*.sh /usr/local/bin/
+RUN chmod a+x /usr/local/bin/*.sh
+
+ENTRYPOINT [ "entrypoint.sh" ]
+```
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Dockerfile: The Future
+
+```
+FROM nginx:1.13.0-alpine AS base
+
+FROM base AS npm
+RUN apk add --update nodejs && npm install npm@latest -g
+WORKDIR /root/single-ui
+
+FROM npm AS dependencies
+COPY . .
+RUN npm set progress=false && npm config set depth 0
+RUN npm install
+RUN npm run build:stage
+
+FROM base AS release
+COPY --from=dependencies /root/single-ui/dist /usr/share/nginx/html
+```

@@ -8,7 +8,6 @@ body {
     padding-left: 30%;
 }
 
-
 h1, h2, h3 {
 font-family: 'Comfortaa';
     color: #189ad1;
@@ -27,7 +26,17 @@ font-family: 'Comfortaa';
     font-family: 'Monospace';
     color: #000000;
 }
-.remark-code, .remark-inline-code { font-family: 'Roboto Mono'; }
+
+.remark-code, .remark-inline-code { 
+    font-family: 'Roboto Mono'; 
+}
+
+.remark-code {
+    background-color:rgba(0, 0, 0, 0.5);
+    color: white;
+    display: block;
+    padding: 10px;
+}
 
 .remark-slide-content p, .remark-slide-content li {
     font-size: 24pt;
