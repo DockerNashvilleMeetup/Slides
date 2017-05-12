@@ -83,29 +83,6 @@ background-size: contain
 * common base images are useful if you're extending base images with software which might be common across your services. (new relic, jolokia, supervisord, tini)
 * 2+3 are your best defense. if you need to install a bunch of dependencies to compile/build, but don't need it to run your application try and clean up before the end of the RUN
 
-
----
-class: top
-background-image: url('./slides/images/slide-bg-2.png')
-background-size: contain
-
-class: center
-# Caching
-<img style="max-height: 400px;" src="./slides/images/chaching.png"><br />
-<div style="
-font-size: 40pt;
-font-weight: bold;
-margin-top: -270px;
-text-shadow: 0px 0px 6px #000000;
-">
-$<span id="exchrate"></span> USD
-</div>
-
-???
-* cache is determined by the contents of each Dockerfile line and the layer which was digested
-* cache means common steps like "apt-get" or "make" can be skipped on subsequent builds
-* cache is neither push nor pulled 
-
 ---
 class: top
 background-image: url('./slides/images/slide-bg-2.png')
@@ -114,12 +91,79 @@ background-size: contain
 ## Dockerfile: The Past
 
 ```
+FROM    ubuntu:latest
+
+RUN     apt-get update -y && apt-get install -y curl gnupg nginx
+RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
+RUN     apt-get install nodejs
+RUN     npm install npm@latest -g
+WORKDIR /root/single-ui-fan
+COPY    single-ui-fan/. .
+RUN     npm install
+RUN     npm run build:prod
+RUN     cp -R ./dist/* /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+COPY    entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT [ "entrypoint.sh" ]
+```
+
+???
+* this is a dockerfile. this is something i might have made in 2014/15. it's not bad, but it's not good either.
+* avoid `latest` if possible; you are pulling in changes from upstream every time your images are built. be specific.
+* point out that when debian dropped npm in their node package a Dockerfile with latest and `nodejs` would have broke
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Result: The Past
+
+```
+image            tag                 size
+----------------------------------------------------------------------
+ubuntu           latest ?            117 MB
+    \_ ubuntu, nginx
+
+single-ui-fan    0.1.0-ubuntu        555 MB
+    \_ ubuntu, nginx, nodejs+npm, app
+```
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Have you heard of Alpine?
+
+<div class="center">
+<img style="
+    background-color: white; 
+    max-width: 600px; padding: 10px;
+    box-shadow: 0 0 10px 0 black" src="slides/images/alpine.png">
+</div>
+
+```
+nginx            1.13.0-alpine      15.5 MB
+    \_ alpine, nginx
+```
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Dockerfile: Today
+
+```
 FROM    nginx:1.13.0-alpine
 
 WORKDIR /root/single-ui-fan
-RUN     apk add --update nodejs && npm install npm@latest -g
+RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
+        rm -rf /var/cache/apk/*
 
-COPY    . .
+COPY    single-ui-fan/. .
 
 RUN     npm set progress=false && npm config set depth 0 && \
         npm install && npm run build:prod && \
@@ -131,6 +175,40 @@ COPY    entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT [ "entrypoint.sh" ]
 ```
+???
+* highlight the use of:
+  * alpine
+  * specific versions (base and npm)
+  * cleaning up in each RUN (both SRC and apk cache)
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+# Face Off
+
+<div class="center">
+    <img style="max-width: 700px;" src="./slides/images/faceoff.jpg">
+</div>
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Result: The Present
+
+```
+single-ui-fan   0.1.0-alpine        139 MB
+    \_ alpine, nginx, nodejs+npm, app
+```
+<span class="center">vs.</span>
+```
+single-ui-fan   0.1.0-debian        555 MB
+    \_ debian, nginx, nodejs+npm, app
+```
+<span class="center">can we do better?</span>
 
 ---
 class: top
@@ -155,6 +233,98 @@ RUN     npm run build:prod
 
 FROM    base AS release
 COPY    --from=dependencies /root/single-ui/dist /usr/share/nginx/html
+COPY    entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT [ "entrypoint.sh" ]
+```
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Result: The Future
+
+```
+single-ui-fan   0.1.0-alpine        20.4 MB
+    \_ alpine, nginx, app
+```
+<span class="center">vs.</span>
+```
+single-ui-fan   0.1.0-alpine        139 MB
+    \_ alpine, nginx, nodejs+npm, app
+
+single-ui-fan   0.1.0-debian        555 MB
+    \_ debian, nginx, nodejs+npm, app
+```
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+class: center
+# Caching
+<img style="max-height: 400px;" src="./slides/images/chaching.png"><br />
+<div style="
+font-size: 40pt;
+font-weight: bold;
+margin-top: -270px;
+text-shadow: 0px 0px 6px #000000;
+">
+$<span id="exchrate"></span> USD
+</div>
+
+???
+* cache is determined by the contents of each Dockerfile line and the layer which was digested
+* cache means common steps like "apt-get" or "make" can be skipped on subsequent builds
+* cache is neither push nor pulled 
+
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Let's start **FROM** the beginning
+
+```
+*FROM    ubuntu:latest
+
+RUN     apt-get update -y && apt-get install -y curl gnupg nginx
+RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
+RUN     apt-get install nodejs
+RUN     npm install npm@latest -g
+WORKDIR /root/single-ui-fan
+COPY    single-ui-fan/. .
+RUN     npm install
+RUN     npm run build:prod
+RUN     cp -R ./dist/* /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+COPY    entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT [ "entrypoint.sh" ]
+```
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## **RUN** for your lives
+
+```
+FROM    ubuntu:latest
+
+*RUN     apt-get update -y && apt-get install -y curl gnupg nginx
+*RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
+*RUN     apt-get install nodejs
+*RUN     npm install npm@latest -g
+WORKDIR /root/single-ui-fan
+COPY    single-ui-fan/. .
+RUN     npm install
+RUN     npm run build:prod
+RUN     cp -R ./dist/* /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT [ "entrypoint.sh" ]
