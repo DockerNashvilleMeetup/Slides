@@ -37,6 +37,10 @@ li::before {
     color: #1D86C8;
 }
 
+a {
+    color: #F16A4C;
+}
+
 .remark-notes p, .remark-notes li,
 .remark-notes-preview p, .remark-notes-preview li {
     font-size: 14pt;
