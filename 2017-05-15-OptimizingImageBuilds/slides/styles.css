@@ -21,6 +21,22 @@ font-family: 'Comfortaa';
     text-shadow: 0px 0px 4px #000000;
 }
 
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    padding-left: 1em;
+    text-indent: -.7em;
+}
+
+li::before {
+    content: "• ";
+    color: #1D86C8;
+}
+
 .remark-notes p, .remark-notes li,
 .remark-notes-preview p, .remark-notes-preview li {
     font-size: 14pt;

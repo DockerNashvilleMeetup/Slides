@@ -263,6 +263,31 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
+## When should I use a full base OS?
+
+<div style="float: left">
+<ul>
+<li>Compliance</li>
+<li>Security</li>
+<li>Ease of Use</li>
+</div>
+<div style="float: right">
+<img style="" src="./slides/images/os-collage.png">
+</div>
+
+
+???
+* larger organizations have requirements that small startups may not
+  * monitoring/logging packages
+  * security scanning/package repos
+* easier to dev/debug containers which have common networking tools
+* familiar tooling yum/apt
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
 class: center
 # Caching
 <img style="max-height: 400px;" src="./slides/images/chaching.png"><br />
@@ -286,7 +311,7 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-## Let's start **FROM** the beginning
+## Dockerfile: Let's start **FROM** the beginning
 
 ```
 *FROM    ubuntu:latest
@@ -310,7 +335,7 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-## **RUN** for your lives
+## Dockerfile: **RUN** for your lives
 
 ```
 FROM    ubuntu:latest
@@ -321,10 +346,61 @@ FROM    ubuntu:latest
 *RUN     npm install npm@latest -g
 WORKDIR /root/single-ui-fan
 COPY    single-ui-fan/. .
-RUN     npm install
-RUN     npm run build:prod
+*RUN     npm install
+*RUN     npm run build:prod
+*RUN     cp -R ./dist/* /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+COPY    entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT [ "entrypoint.sh" ]
+```
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Dockerfile: Got **Cache**?
+
+```
+FROM    ubuntu:latest
+
+RUN     apt-get update -y && apt-get install -y curl gnupg nginx
+RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
+RUN     apt-get install nodejs
+RUN     npm install npm@latest -g
+WORKDIR /root/single-ui-fan
+*COPY    single-ui-fan/. .
+*RUN     npm install
+*RUN     npm run build:prod
 RUN     cp -R ./dist/* /usr/share/nginx/html
 WORKDIR /usr/share/nginx/html
+COPY    entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT [ "entrypoint.sh" ]
+```
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+## Dockerfile: Back **FROM** The Future
+
+```
+ARG     BASE_VERSION=1.13.0-alpine
+*FROM    nginx:${BASE_VERSION} AS base
+
+FROM    base AS npm
+WORKDIR /root/single-ui
+RUN     apk add --update nodejs && npm install npm@latest -g
+
+*FROM    npm AS dependencies
+COPY    . .
+RUN     npm set progress=false && npm config set depth 0
+RUN     npm install
+RUN     npm run build:prod
+
+*FROM    base AS release
+COPY    --from=dependencies /root/single-ui/dist /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT [ "entrypoint.sh" ]
