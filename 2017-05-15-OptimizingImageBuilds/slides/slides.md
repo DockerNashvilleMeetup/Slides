@@ -100,18 +100,20 @@ background-size: contain
 
 ## Dockerfile: The Past
 
-```
+```Dockerfile
 FROM    ubuntu:latest
 
 RUN     apt-get update -y && apt-get install -y curl gnupg nginx
 RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
 RUN     apt-get install nodejs
 RUN     npm install npm@latest -g
+
 WORKDIR /root/single-ui-fan
 COPY    single-ui-fan/. .
 RUN     npm install
 RUN     npm run build:prod
 RUN     cp -R ./dist/* /usr/share/nginx/html
+
 WORKDIR /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
@@ -166,7 +168,6 @@ background-size: contain
 nginx            1.13.0-alpine      15.5 MB
     \_ alpine, nginx
 ```
-
 ???
 * alpine linux is a minimal linux distribution
 * minimal: includes slimmed down binary packages
@@ -190,8 +191,6 @@ background-size: contain
 <div style="float: right">
 <img style="" src="./slides/images/os-collage.png">
 </div>
-
-
 ???
 * larger organizations have requirements that small startups may not
 * ask the audience what they think might be some of those requirements?
@@ -211,18 +210,19 @@ background-size: contain
 
 ## Dockerfile: Today
 
-```
+```Dockerfile
 FROM    nginx:1.13.0-alpine
 
-WORKDIR /root/single-ui-fan
 RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
         rm -rf /var/cache/apk/*
 
-COPY    single-ui-fan/. .
-
+WORKDIR /root/single-ui-fan
+COPY    single-ui-fan/package.json .
 RUN     npm set progress=false && npm config set depth 0 && \
-        npm install && npm run build:prod && \
-        cp -R ./dist/* /usr/share/nginx/html && \
+        npm install --production
+
+COPY    single-ui-fan/. .
+RUN     npm run build:prod && cp -R dist/. /usr/share/nginx/html && \
         cd / && rm -rf /root/single-ui-fan
 
 WORKDIR /usr/share/nginx/html
@@ -249,7 +249,6 @@ background-size: contain
 <div class="center">
     <img style="max-width: 700px;" src="./slides/images/faceoff.jpg">
 </div>
-
 ???
 LOL NIC CAGE
 
@@ -259,10 +258,10 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-## Result: 139 MB
+## Result: 291 MB
 
 ```
-single-ui-fan   0.1.0-alpine        139 MB
+single-ui-fan   0.1.0-alpine        291 MB
     \_ alpine, nginx, nodejs+npm, app
 ```
 <span class="center">vs.</span>
@@ -270,13 +269,13 @@ single-ui-fan   0.1.0-alpine        139 MB
 single-ui-fan   0.1.0-debian        555 MB
     \_ debian, nginx, nodejs+npm, app
 ```
-<span class="center">can we do better than **399.28%**?</span>
+<span class="center">can we do better than **48%**?</span>
 
 ???
 * point out that we're shipping our application with a bunch of stuff we don't need
   * ask the audience what are some of the things we don't need.
     * nodejs/npm
-    * nodemodules
+    * node_modules
 
 <!-- slide 12 -->
 ---
@@ -298,22 +297,21 @@ background-size: contain
 
 ## Dockerfile: The Future
 
-```
+```Dockerfile
 ARG     BASE_VERSION=1.13.0-alpine
 FROM    nginx:${BASE_VERSION} AS base
 
-FROM    base AS npm
+FROM    base AS build
 WORKDIR /root/single-ui-fan
 RUN     apk add --update nodejs && npm install npm@4.5.0 -g
-
-FROM    npm AS dependencies
+COPY    single-ui-fan/package.json .
+RUN     npm set progress=false && npm config set depth 0 && \
+        npm install
 COPY    single-ui-fan/. .
-RUN     npm set progress=false && npm config set depth 0
-RUN     npm install
 RUN     npm run build:prod
 
 FROM    base AS release
-COPY    --from=dependencies /root/single-ui-fan/dist /usr/share/nginx/html
+COPY    --from=build /root/single-ui-fan/dist /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT [ "entrypoint.sh" ]
@@ -341,13 +339,13 @@ single-ui-fan   0.1.0-alpine        20.4 MB
 ```
 <span class="center">vs.</span>
 ```
-single-ui-fan   0.1.0-alpine        139 MB
+single-ui-fan   0.1.0-alpine        291 MB
     \_ alpine, nginx, nodejs+npm, app
 
 single-ui-fan   0.1.0-debian        555 MB
     \_ debian, nginx, nodejs+npm, app
 ```
-<span class="center">How does **2720.59%** sound to you?</span>
+<span class="center">How does **96%** sound to you?</span>
 
 ???
 * our final image only contains nginx and our app "distribution"
@@ -360,7 +358,6 @@ background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
 ## Yeah...
-
 <div class="center">
     <img width="720px" src="./slides/images/flying-laptop.gif">
 </div>
@@ -395,19 +392,20 @@ background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
 ## Dockerfile: Let's start **FROM** the beginning
-
-```
+```Dockerfile
 *FROM    ubuntu:latest
 
 RUN     apt-get update -y && apt-get install -y curl gnupg nginx
 RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
 RUN     apt-get install nodejs
 *RUN     npm install npm@latest -g
+
 WORKDIR /root/single-ui-fan
 COPY    single-ui-fan/. .
 RUN     npm install
 RUN     npm run build:prod
 RUN     cp -R ./dist/* /usr/share/nginx/html
+
 WORKDIR /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
@@ -415,8 +413,10 @@ ENTRYPOINT [ "entrypoint.sh" ]
 ```
 
 ???
-* avoid `latest` if possible; you are pulling in changes from upstream every time your images are built. be specific.
-* point out that when debian dropped npm in their node package a Dockerfile with latest and `nodejs` would have broke
+* explain that we're going to transform this image into the present "optimal" version
+* using latest is bad
+  * when debian dropped npm in their node package a Dockerfile with latest and `nodejs` via apt would have exploded
+* consider a smaller base image; also, consider using official base images for things like php, mysql, postgres or nginx. they often have container specific tooling and optimizations.
 
 <!-- slide 18 -->
 ---
@@ -426,18 +426,18 @@ background-size: contain
 
 ## Dockerfile: **RUN** for your lives
 
-```
-FROM    ubuntu:latest
+```Dockerfile
+FROM    nginx:1.13.0-alpine
 
-*RUN     apt-get update -y && apt-get install -y curl gnupg nginx
-*RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
-*RUN     apt-get install nodejs
-*RUN     npm install npm@latest -g
+*RUN     apk add --update nodejs
+*RUN     npm install npm@4.5.0 -g
+
 WORKDIR /root/single-ui-fan
 COPY    single-ui-fan/. .
 *RUN     npm install
 *RUN     npm run build:prod
 *RUN     cp -R ./dist/* /usr/share/nginx/html
+
 WORKDIR /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
@@ -445,8 +445,12 @@ ENTRYPOINT [ "entrypoint.sh" ]
 ```
 
 ???
-* chain your RUN statements
-* clean up after yourself
+* we've combined our RUN statements to execute in a single layer
+* before ending the RUN we try and clean up (if possible)
+  * we can't delete/remove NPM/NODEJS because we need it to build
+  * removing it in the subsequent run is pointless because it's already committed in a previous layer
+  * we're removing the apk cache (recent versions this is unneccessary with apk add --no-cache)
+  * we're removing the source code (and node_modules) directory
 
 <!-- slide 19 -->
 ---
@@ -456,24 +460,24 @@ background-size: contain
 
 ## Dockerfile: Got **Cache**?
 
-```
-FROM    ubuntu:latest
+```Dockerfile
+FROM    nginx:1.13.0-alpine
 
-RUN     apt-get update -y && apt-get install -y curl gnupg nginx
-RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
-RUN     apt-get install nodejs
-RUN     npm install npm@latest -g
+RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
+        rm -rf /var/cache/apk/*
+
 WORKDIR /root/single-ui-fan
 *COPY    single-ui-fan/. .
-*RUN     npm install
-*RUN     npm run build:prod
-RUN     cp -R ./dist/* /usr/share/nginx/html
+*RUN     npm set progress=false && npm config set depth 0 && \
+*       npm install --production && \
+*       npm run build:prod && cp -R ./dist/* /usr/share/nginx/html && \
+*       cd / && rm -rf /root/single-ui-fan
+
 WORKDIR /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT [ "entrypoint.sh" ]
 ```
-
 ???
 * explain that the contents of your COPY will determine cache hits or misses
 * data which changes frequently will invalidate the cache from that point forward
@@ -488,20 +492,21 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-## Dockerfile: Be Specific
+## Dockerfile: Are We There Yet?
 
-```
-*FROM    nginx:1.13.0-alpine
+```Dockerfile
+FROM    nginx:1.13.0-alpine
 
-WORKDIR /root/single-ui-fan
-*RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
+RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
         rm -rf /var/cache/apk/*
 
-COPY    single-ui-fan/. .
-
+WORKDIR /root/single-ui-fan
+COPY    single-ui-fan/package.json .
 RUN     npm set progress=false && npm config set depth 0 && \
-        npm install && npm run build:prod && \
-        cp -R ./dist/* /usr/share/nginx/html && \
+        npm install --production
+
+COPY    single-ui-fan/. .
+RUN     npm run build:prod && cp -R dist/. /usr/share/nginx/html && \
         cd / && rm -rf /root/single-ui-fan
 
 WORKDIR /usr/share/nginx/html
@@ -510,9 +515,11 @@ COPY    entrypoint.sh /usr/local/bin/
 ENTRYPOINT [ "entrypoint.sh" ]
 ```
 ???
-* this is our "present image"
-* we've picked a more relevant base image
-* we've pinned our image and dependencies to a specific version
+* this is our "present image"; lets recap
+  * we've picked a smaller and more specific base image
+  * we've chained our run statements and tidied up after them
+  * we've pinned our image and dependencies to a specific version
+  * we've applied language specific optimizations to our build
 
 <!-- slide 21 -->
 ---
@@ -520,59 +527,23 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-## Dockerfile: Chain the RUN statement(s)
-
-```
-FROM    nginx:1.13.0-alpine
-
-WORKDIR /root/single-ui-fan
-*RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
-*       rm -rf /var/cache/apk/*
-
-COPY    single-ui-fan/. .
-
-*RUN     npm set progress=false && npm config set depth 0 && \
-*       npm install && npm run build:prod && \
-*       cp -R ./dist/* /usr/share/nginx/html && \
-*       cd / && rm -rf /root/single-ui-fan
-
-WORKDIR /usr/share/nginx/html
-COPY    entrypoint.sh /usr/local/bin/
-
-ENTRYPOINT [ "entrypoint.sh" ]
-```
-???
-* we've combined our RUN statements to execute in a single layer
-* before ending the RUN we try and clean up (if possible)
-  * we can't delete/remove NPM/NODEJS because we need it to build
-  * removing it in the subsequent run is pointless because it's already committed in a previous layer
-  * we're removing the apk cache (recent versions this is unneccessary with apk add --no-cache)
-  * we're removing the source code (and node_modules) directory
-
-<!-- slide 22 -->
----
-class: top
-background-image: url('./slides/images/slide-bg-2.png')
-background-size: contain
-
 ## Dockerfile: Back **FROM** The Future
 
-```
+```Dockerfile
 ARG     BASE_VERSION=1.13.0-alpine
 *FROM    nginx:${BASE_VERSION} AS base
 
-*FROM    base AS npm
+*FROM    base AS build
 WORKDIR /root/single-ui-fan
 RUN     apk add --update nodejs && npm install npm@4.5.0 -g
-
-*FROM    npm AS dependencies
+COPY    single-ui-fan/package.json .
+RUN     npm set progress=false && npm config set depth 0 && \
+        npm install
 COPY    single-ui-fan/. .
-RUN     npm set progress=false && npm config set depth 0
-RUN     npm install
 RUN     npm run build:prod
 
 *FROM    base AS release
-COPY    --from=dependencies /root/single-ui-fan/dist /usr/share/nginx/html
+COPY    --from=build /root/single-ui-fan/dist /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT [ "entrypoint.sh" ]
@@ -586,7 +557,7 @@ ENTRYPOINT [ "entrypoint.sh" ]
   * if you had dockerfiles for specific stages of builds (im sorry), you no longer have to
   * why would I no longer have to chain RUNs in intermediate steps
 
-<!-- slide 23 -->
+<!-- slide 22 -->
 ---
 class: top
 background-image: url('./slides/images/slide-bg-2.png')
@@ -594,22 +565,21 @@ background-size: contain
 
 ## Dockerfile: COPY what?
 
-```
+```Dockerfile
 ARG     BASE_VERSION=1.13.0-alpine
 FROM    nginx:${BASE_VERSION} AS base
 
-FROM    base AS npm
+FROM    base AS build
 WORKDIR /root/single-ui-fan
 RUN     apk add --update nodejs && npm install npm@4.5.0 -g
-
-FROM    npm AS dependencies
+COPY    single-ui-fan/package.json .
+RUN     npm set progress=false && npm config set depth 0 && \
+        npm install
 COPY    single-ui-fan/. .
-RUN     npm set progress=false && npm config set depth 0
-RUN     npm install
 RUN     npm run build:prod
 
 FROM    base AS release
-*COPY    --from=dependencies /root/single-ui-fan/dist /usr/share/nginx/html
+*COPY    --from=build /root/single-ui-fan/dist /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT [ "entrypoint.sh" ]
@@ -619,12 +589,136 @@ ENTRYPOINT [ "entrypoint.sh" ]
   * this references a location on an images filesystem
   * think of it like artifacts. but the entire "image" contents is available
 
-<!-- slide 24 -->
+<!-- slide 23 -->
 ---
 class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
+# Application Specific Builds
+
+* Consider what you're building
+* Compile on your build server and then copy _into_ the container
+* Try new things, compare, weigh your options
+
+
+<!-- slide 24 -->
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+# Go Build
+
+### Build the Binary
+
+```shell
+$  go build -o yourapp .
+$  docker build -t yourapp .
+```
+
+### Dockerfile:
+```Dockerfile
+FROM alpine:3.5
+COPY yourapp /usr/local/bin
+ENTRYPOINT ["yourapp"]
+```
+
+<!-- slide 25 -->
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+# Java Build
+
+### Build your JAR/WAR
+
+```shell
+$  mvn clean package
+$  docker build -t yourapp .
+```
+
+### Dockerfile
+
+```Dockerfile
+FROM openjdk:8u121-jre-alpine
+COPY target/yourapp*.jar ./app.jar
+ENTRYPOINT [ "java", "-Djava.security.egd=file:/dev/urandom", "-jar", "app.jar" ]
+```
+
+<!-- slide 26 -->
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+# NodeJS
+* Copy your package.json and run `npm install` before building your app. The tradeoff is worth it.
+* Utilize .dockerignore and ignore unimportant things (like `npm-debug.log` and `.git`)
+
+Example
+```Dockerfile
+COPY package.json .
+RUN npm install --production
+COPY . .
+RUN npm run build
+```
+
+<!-- slide 27 -->
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+# Security
+
+* Docker Security Scan is the cats pajamas
+* CVE scanning
+* Matches binary signatures in each layer
+  * OS packages
+  * Component level (JAR, CPAN, PIP, etc)
+* Available on private Docker Cloud ($) and Docker Trusted Registry EE ($$$$)
+
+<!-- slide 28 -->
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+class: center
+<img style="max-width: 820px" src="./slides/images/dtr.png">
+
+<!-- slide 29 -->
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+# Image Signing
+
+* Key signatures can be leveraged for authenticity and validity
+
+<div class="center" style="margin-top: 10px">
+<img src="./slides/images/trust.png">
+</div>
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+# Recap
+
+todo
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+
+
+
 # Links and More
 
+todo
 * https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/

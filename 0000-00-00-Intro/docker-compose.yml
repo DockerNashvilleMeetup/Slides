@@ -13,4 +13,4 @@ services:
       - HIGHLIGHT_SPANS=true
       - RATIO=16:9
     ports:
-      - 8080:80
+      - 8081:80
