@@ -39,6 +39,9 @@ background-size: contain
 
 * These slides can be viewed online at https://live.nashdocker.io
 
+???
+* mention that some prerequisite knowledge is assumed here. we're assuming that you've used docker and have authored a Dockerfile
+
 <!-- slide 3 -->
 ---
 class: top
@@ -148,6 +151,7 @@ single-ui-fan    0.1.0-ubuntu        555 MB
 * base image alone is 117mb, and we're installing nginx, nodejs, npm, node_modules, and our app
 * the result: 555mb. doesn't seem terrible. i've seen worse.
 * if you're pushing/pulling/deploying several times a day and aren't cleaning up you'll eventually run out of space.
+* if you're using an orchestration system (swarm, kube, mesos, etc.) pruning is done automatically
 
 <!-- slide 7 -->
 ---
@@ -393,12 +397,12 @@ background-size: contain
 
 ## Dockerfile: Let's start **FROM** the beginning
 ```
-*FROM    ubuntu:latest
+FROM    ubuntu:latest
 
 RUN     apt-get update -y && apt-get install -y curl gnupg nginx
 RUN     curl -sL https://deb.nodesource.com/setup_6.x | bash - 
 RUN     apt-get install nodejs
-*RUN     npm install npm@latest -g
+RUN     npm install npm@latest -g
 
 WORKDIR /root/single-ui-fan
 COPY    single-ui-fan/. .
@@ -414,9 +418,6 @@ ENTRYPOINT [ "entrypoint.sh" ]
 
 ???
 * explain that we're going to transform this image into the present "optimal" version
-* using latest is bad
-  * when debian dropped npm in their node package a Dockerfile with latest and `nodejs` via apt would have exploded
-* consider a smaller base image; also, consider using official base images for things like php, mysql, postgres or nginx. they often have container specific tooling and optimizations.
 
 <!-- slide 18 -->
 ---
@@ -424,19 +425,19 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-## Dockerfile: **RUN** for your lives
+## Dockerfile: Are you **FROM** around here?
 
 ```
-FROM    nginx:1.13.0-alpine
+*FROM    nginx:1.13.0-alpine
 
-*RUN     apk add --update nodejs
+RUN     apk add --update nodejs
 *RUN     npm install npm@4.5.0 -g
 
 WORKDIR /root/single-ui-fan
 COPY    single-ui-fan/. .
-*RUN     npm install
-*RUN     npm run build:prod
-*RUN     cp -R ./dist/* /usr/share/nginx/html
+RUN     npm install
+RUN     npm run build:prod
+RUN     cp -R ./dist/* /usr/share/nginx/html
 
 WORKDIR /usr/share/nginx/html
 COPY    entrypoint.sh /usr/local/bin/
@@ -445,12 +446,10 @@ ENTRYPOINT [ "entrypoint.sh" ]
 ```
 
 ???
-* we've combined our RUN statements to execute in a single layer
-* before ending the RUN we try and clean up (if possible)
-  * we can't delete/remove NPM/NODEJS because we need it to build
-  * removing it in the subsequent run is pointless because it's already committed in a previous layer
-  * we're removing the apk cache (recent versions this is unneccessary with apk add --no-cache)
-  * we're removing the source code (and node_modules) directory
+* ask the audience what is different?
+* using latest is bad
+  * when debian dropped npm in their node package a Dockerfile with latest and `nodejs` via apt would have exploded
+* consider a smaller base image; also, consider using official base images for things like php, mysql, postgres or nginx. they often have container specific tooling and optimizations.
 
 <!-- slide 19 -->
 ---
@@ -458,13 +457,13 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-## Dockerfile: Got **Cache**?
+## Dockerfile: **RUN** for your lives!
 
 ```
 FROM    nginx:1.13.0-alpine
 
-RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
-        rm -rf /var/cache/apk/*
+*RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
+*       rm -rf /var/cache/apk/*
 
 WORKDIR /root/single-ui-fan
 *COPY    single-ui-fan/. .
@@ -479,12 +478,12 @@ COPY    entrypoint.sh /usr/local/bin/
 ENTRYPOINT [ "entrypoint.sh" ]
 ```
 ???
-* explain that the contents of your COPY will determine cache hits or misses
-* data which changes frequently will invalidate the cache from that point forward
-* people can/will do a lot of things to speed up their builds post-cache miss
-  * cached repositories
-  * copy local file cache
-  * copy entire vendor/dependency folders (is this bad?)
+* we've combined our RUN statements to execute in a single layer
+* before ending the RUN we try and clean up (if possible)
+  * we can't delete/remove NPM/NODEJS because we need it to build
+  * removing it in the subsequent run is pointless because it's already committed in a previous layer
+  * we're removing the apk cache (recent versions this is unneccessary with apk add --no-cache)
+  * we're removing the source code (and node_modules) directory
 
 <!-- slide 20 -->
 ---
@@ -492,7 +491,7 @@ class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-## Dockerfile: Are We There Yet?
+## Dockerfile: Got **Cache**?
 
 ```
 FROM    nginx:1.13.0-alpine
@@ -515,6 +514,12 @@ COPY    entrypoint.sh /usr/local/bin/
 ENTRYPOINT [ "entrypoint.sh" ]
 ```
 ???
+* explain that the contents of your COPY will determine cache hits or misses
+* data which changes frequently will invalidate the cache from that point forward
+* people can/will do a lot of things to speed up their builds post-cache miss
+  * cached repositories
+  * copy local file cache
+  * copy entire vendor/dependency folders (is this bad?)
 * this is our "present image"; lets recap
   * we've picked a smaller and more specific base image
   * we've chained our run statements and tidied up after them
@@ -700,7 +705,8 @@ background-size: contain
 <div class="center" style="margin-top: 10px">
 <img src="./slides/images/trust.png">
 </div>
-
+???
+* eg: your CI build server may sign the image, and then QA must sign in order for UCP to deploy the image
 ---
 class: top
 background-image: url('./slides/images/slide-bg-2.png')
@@ -708,10 +714,11 @@ background-size: contain
 
 # Recap
 
-* Use specific base images (or build your own)
+* Use specific base images when it makes sense (or build your own)
 * Leverage cache when possible to speed up builds
+* Defer cache misses
 * Multi-stage builds will be in the next stable release
-* Image scanning can help you build secure images
+* Image scanning can help you build images which are more secure
 
 ---
 class: top
