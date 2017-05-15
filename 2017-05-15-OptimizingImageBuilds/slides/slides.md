@@ -37,7 +37,7 @@ background-size: contain
 
 ## Pro-tip
 
-* These slides can be viewed online at http://nashdocker.io/live
+* These slides can be viewed online at https://live.nashdocker.io
 
 <!-- slide 3 -->
 ---
@@ -100,7 +100,7 @@ background-size: contain
 
 ## Dockerfile: The Past
 
-```Dockerfile
+```
 FROM    ubuntu:latest
 
 RUN     apt-get update -y && apt-get install -y curl gnupg nginx
@@ -210,7 +210,7 @@ background-size: contain
 
 ## Dockerfile: Today
 
-```Dockerfile
+```
 FROM    nginx:1.13.0-alpine
 
 RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
@@ -297,7 +297,7 @@ background-size: contain
 
 ## Dockerfile: The Future
 
-```Dockerfile
+```
 ARG     BASE_VERSION=1.13.0-alpine
 FROM    nginx:${BASE_VERSION} AS base
 
@@ -392,7 +392,7 @@ background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
 ## Dockerfile: Let's start **FROM** the beginning
-```Dockerfile
+```
 *FROM    ubuntu:latest
 
 RUN     apt-get update -y && apt-get install -y curl gnupg nginx
@@ -426,7 +426,7 @@ background-size: contain
 
 ## Dockerfile: **RUN** for your lives
 
-```Dockerfile
+```
 FROM    nginx:1.13.0-alpine
 
 *RUN     apk add --update nodejs
@@ -460,7 +460,7 @@ background-size: contain
 
 ## Dockerfile: Got **Cache**?
 
-```Dockerfile
+```
 FROM    nginx:1.13.0-alpine
 
 RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
@@ -494,7 +494,7 @@ background-size: contain
 
 ## Dockerfile: Are We There Yet?
 
-```Dockerfile
+```
 FROM    nginx:1.13.0-alpine
 
 RUN     apk add --update nodejs && npm install npm@4.5.0 -g && \
@@ -529,7 +529,7 @@ background-size: contain
 
 ## Dockerfile: Back **FROM** The Future
 
-```Dockerfile
+```
 ARG     BASE_VERSION=1.13.0-alpine
 *FROM    nginx:${BASE_VERSION} AS base
 
@@ -565,7 +565,7 @@ background-size: contain
 
 ## Dockerfile: COPY what?
 
-```Dockerfile
+```
 ARG     BASE_VERSION=1.13.0-alpine
 FROM    nginx:${BASE_VERSION} AS base
 
@@ -611,13 +611,13 @@ background-size: contain
 
 ### Build the Binary
 
-```shell
+```
 $  go build -o yourapp .
 $  docker build -t yourapp .
 ```
 
 ### Dockerfile:
-```Dockerfile
+```
 FROM alpine:3.5
 COPY yourapp /usr/local/bin
 ENTRYPOINT ["yourapp"]
@@ -632,14 +632,14 @@ background-size: contain
 
 ### Build your JAR/WAR
 
-```shell
+```
 $  mvn clean package
 $  docker build -t yourapp .
 ```
 
 ### Dockerfile
 
-```Dockerfile
+```
 FROM openjdk:8u121-jre-alpine
 COPY target/yourapp*.jar ./app.jar
 ENTRYPOINT [ "java", "-Djava.security.egd=file:/dev/urandom", "-jar", "app.jar" ]
@@ -656,7 +656,7 @@ background-size: contain
 * Utilize .dockerignore and ignore unimportant things (like `npm-debug.log` and `.git`)
 
 Example
-```Dockerfile
+```
 COPY package.json .
 RUN npm install --production
 COPY . .
@@ -708,17 +708,15 @@ background-size: contain
 
 # Recap
 
-todo
+* Use specific base images (or build your own)
+* Leverage cache when possible to speed up builds
+* Multi-stage builds will be in the next stable release
+* Image scanning can help you build secure images
 
 ---
 class: top
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 
-
-
-
-# Links and More
-
-todo
-* https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/
+# Thank you
+### Questions?

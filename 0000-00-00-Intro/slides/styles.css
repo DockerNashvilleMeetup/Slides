@@ -45,4 +45,18 @@ a {
     color: #FAAF40;
 }
 
+td {
+    font-size: 20pt;
+    line-height: 28pt;
+    color: #FAAF40;
+    padding-right: 12px;
+}
+
+td span {
+    color: #1D86C8;
+    font-weight: bold;
+}
+td b {
+    color: #F16A4C
+}
 .remark-code, .remark-inline-code { font-family: 'Roboto Mono'; }

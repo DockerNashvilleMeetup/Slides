@@ -2,9 +2,13 @@ class: middle, center
 background-image: url('./slides/images/slide-bg-1.png')
 background-size: contain
 
-# Welcome
+# Docker Nashville
 
-Hi.
+<p style="font-size: 32pt;">Welcome.</p>
+
+~ Wifi ~<br />
+Built Wifi // Buil7Gues7
+
 
 ---
 class: center
@@ -54,7 +58,7 @@ background-size: contain
 
 .center[<img src="https://www.franklinamerican.com/img/FAMC_Logo.png" style="width: 60%; position: relative">]
 
-<span style="width: 100%; position: fixed; bottom: 7.5%">_Let us know if your company is interested in hosting or sponsoring a future meetup!_</span>
+<div style="width: 80%; position: fixed; bottom: 7.5%"><p>Let us know if your company is interested in hosting or sponsoring a future meetup!</p></div>
 
 ---
 class: top
@@ -79,35 +83,27 @@ background-size: contain
 <table>
 <tbody>
   <tr>
-    <td>June</td>
-    <td>
-      Lunch and Learn at Franklin American<br/>
-      Speaker: me<br/>
-      Topic: Namespaces and You -- How containers actually work
+    <td style="vertical-align: top">June</td>
+    <td style="vertical-align: top">
+      <span style="text-decoration: underline">Lunch and Learn at Franklin American</span><br/>
+      <b>Speaker:</b> me<br/>
+      <b>Topic:</b> Namespaces and You -- How containers actually work
     </td>
   </tr>
   <tr>
-    <td>June</td>
-    <td>
-      Monthly Meetup<br />
-      Speaker: you<br />
-      Topic: If you're interested come talk to us
+    <td style="vertical-align: top">June</td>
+    <td style="vertical-align: top">
+      <span style="text-decoration: underline">Monthly Meetup @ Built</span><br />
+      <b>Speaker:</b> you<br />
+      <b>Topic:</b> If you're interested come talk to us
     </td>
   </tr>
   <tr>
-    <td>July</td>
-    <td>
-      Monthly Meetup<br />
-      Speaker: Jason Myers<br />
-      Topic: Event Streams with Amazon ECS and Lambda
-    </td>
-  </tr>
-  <tr>
-    <td>August</td>
-    <td>
-      Monthly Meetup<br />
-      Speaker: you<br />
-      Topic: If you're interested please come talk to us
+    <td style="vertical-align: top">July</td>
+    <td style="vertical-align: top">
+      <span style="text-decoration: underline">Monthly Meetup @ Built</span><br />
+      <b>Speaker:</b> Jason Myers<br />
+      <b>Topic:</b> Event Streams with Amazon ECS and Lambda
     </td>
   </tr>
 </tbody>
