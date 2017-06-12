@@ -4,12 +4,18 @@ background-size: contain
 
 # Docker Nashville
 
-<p style="font-size: 32pt;">Welcome.</p>
+<p style="font-size: 32pt;">Welcome</p>
 
-~ Wifi ~<br />
-Built Wifi // Buil7Gues7
+Contributions for food<br /> are appreciated<br /><br />No sponsor this month :(
 
 
+---
+class: center
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+.center[<img src="./slides/images/crosbysux.jpg" style="width: 60%; position: relative">]
+Congratulations Penguins. You Suck.
 ---
 class: center
 background-image: url('./slides/images/slide-bg-2.png')
@@ -36,29 +42,15 @@ We are dedicated to providing a harassment free experience for everyone
 </tbody>
 </table>
 
-<!--
-<td style="text-align: left; vertical-align: top; width: 65%">
-<ul>
-<li>Offensive, inappropriate, or unwanted comments related to gender, gender identity or expression, sexual orientation, disability, physical appearance, body size, race, ethnicity, national origin, religion, or age, or other protected categories under applicable law.</li>
-<li>Visual harassment eg. sexual imagery or use of sexual language at Docker community events</li>
-<li>Disrespect towards differences of opinion</li>
-<li>Deliberate intimidation, stalking, harassing photography or recording</li>
-<li>Sustained disruption of talks or other events</li>
-<li>Inappropriate or unwanted physical contact</li>
-<li>Intimidation or bullying (online or in-person)</li>
-<li>Unwelcome sexual attention</li>
-</ul>
-</td>-->
-
 ---
 class: center
 background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
-## Thank you to our sponsors!
+## Thank you to our host!
 
-.center[<img src="https://www.franklinamerican.com/img/FAMC_Logo.png" style="width: 60%; position: relative">]
+.center[<img src="./slides/images/eventbrite-logo-vector.png" style="width: 40%; position: relative; top: -100px;">]
 
-<div style="width: 80%; position: fixed; bottom: 7.5%"><p>Let us know if your company is interested in hosting or sponsoring a future meetup!</p></div>
+<div style="width: 80%; position: fixed; bottom: 15.5%"><p>Please let us know if your company is interested in hosting or sponsoring a future meetup!</p></div>
 
 ---
 class: top
@@ -70,7 +62,7 @@ background-size: contain
 - Topic idea for future meetups? https://bit.ly/DockerNashvilleIdeas
 - Slides available at http://bit.ly/DockerNashvilleSlides
 - Connect with local Nashville tech community in NashDev Slack: http://nashdev.com/
-  - join the `#docker` channel!
+  - Join the `#docker` channel!
 - Join the Docker Community Slack instance: https://dockr.ly/community
 
 ---
@@ -86,25 +78,39 @@ background-size: contain
     <td style="vertical-align: top">June</td>
     <td style="vertical-align: top">
       <span style="text-decoration: underline">Lunch and Learn at Franklin American</span><br/>
-      <b>Speaker:</b> me<br/>
-      <b>Topic:</b> Namespaces and You -- How containers actually work
-    </td>
-  </tr>
-  <tr>
-    <td style="vertical-align: top">June</td>
-    <td style="vertical-align: top">
-      <span style="text-decoration: underline">Monthly Meetup @ Built</span><br />
-      <b>Speaker:</b> you<br />
-      <b>Topic:</b> If you're interested come talk to us
+      <b>Speaker:</b> Joseph Taylor O'Connor and Kevin Crawley<br/>
+      <b>Topic:</b> Developing with Java Spring in Docker
     </td>
   </tr>
   <tr>
     <td style="vertical-align: top">July</td>
     <td style="vertical-align: top">
-      <span style="text-decoration: underline">Monthly Meetup @ Built</span><br />
+      <span style="text-decoration: underline">Monthly Meetup</span><br />
       <b>Speaker:</b> Jason Myers<br />
       <b>Topic:</b> Event Streams with Amazon ECS and Lambda
     </td>
   </tr>
+  <tr>
+    <td style="vertical-align: top">August</td>
+    <td style="vertical-align: top">
+      <span style="text-decoration: underline">Monthly Meetup</span><br />
+      <b>Speaker:</b> You<br />
+      <b>Topic:</b> You Tell Me
+    </td>
+  </tr>
 </tbody>
 </table>
+
+
+---
+class: top
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+
+
+## Upcoming Local Conferences
+
+* Devops Days - Oct. 17-18 - CFP Open
+* Nodevember - Nov. 27-28 - CFP Open
+
+If you're aware of any other conferences please DM @kevin on NashDev or submit a PR.
