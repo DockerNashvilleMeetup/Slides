@@ -6,9 +6,6 @@ background-size: contain
 
 <p style="font-size: 32pt;">Welcome</p>
 
-Contributions for food<br /> are appreciated<br /><br />No sponsor this month :(
-
-
 ---
 class: center
 background-image: url('./slides/images/slide-bg-2.png')
@@ -51,6 +48,14 @@ background-size: contain
 .center[<img src="./slides/images/eventbrite-logo-vector.png" style="width: 40%; position: relative; top: -100px;">]
 
 <div style="width: 80%; position: fixed; bottom: 15.5%"><p>Please let us know if your company is interested in hosting or sponsoring a future meetup!</p></div>
+
+---
+class: center
+background-image: url('./slides/images/slide-bg-2.png')
+background-size: contain
+## Thank you to our sponsor!
+
+.center[<img src="./slides/images/leankit.png" style="width: 40%; position: relative;">]
 
 ---
 class: top
