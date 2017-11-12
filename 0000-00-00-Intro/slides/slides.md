@@ -5,7 +5,6 @@ background-size: contain
 # Docker Nashville
 
 <p style="font-size: 32pt;">Welcome<br /><br />Wifi: BuiltWifi<br />Pass: Buil7Gues7</p>
-You'll need this:<br /> https://gitlab.nashgo.org/kevin/pwd
 ---
 class: center
 background-image: url('./slides/images/slide-bg-2.png')
@@ -76,11 +75,10 @@ background-size: contain
   <tr>
     <td style="vertical-align: top">September</td>
     <td style="vertical-align: top">
-      <span>TBA</span>
-	<!--
-      <span style="text-decoration: underline">Lunch and Learn at Franklin American</span><br/>
+      <span>December 11, 2017</span>
+      <span style="text-decoration: underline">Spring Boot Docker</span><br/>
       <b>Speaker:</b> Joseph Taylor O'Connor and Kevin Crawley<br/>
-      <b>Topic:</b> Developing with Java Spring in Docker-->
+      <b>Topic:</b> Developing with Java Spring in Docker
     </td>
   </tr>
   <tr>
@@ -113,7 +111,6 @@ background-size: contain
 
 ## Upcoming Local Conferences
 
-* Devops Days - Oct. 17-18 - CFP Closed
-* Nodevember - Nov. 27-28 - CFP Open
+* Nodevember - Nov. 27-28 - CFP Closed
 
 If you're aware of any other conferences please DM @kevin on NashDev or submit a PR.
