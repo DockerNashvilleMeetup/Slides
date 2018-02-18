@@ -4,7 +4,8 @@ background-size: contain
 
 # Docker Nashville
 
-<p style="font-size: 32pt;">Welcome<br /><br />Wifi: BuiltWifi<br />Pass: Buil7Gues7</p>
+<p style="font-size: 32pt;">Welcome<br />
+<!--<br />Wifi: BuiltWifi<br />Pass: Buil7Gues7--></p>
 ---
 class: center
 background-image: url('./slides/images/slide-bg-2.png')
@@ -38,7 +39,7 @@ background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 ## Thank you to our host!
 
-.center[<img src="./slides/images/built.png" style="width: 30%; position: relative;">]
+.center[<img src="./slides/images/datablue.jpeg" style="width: 30%; position: relative;">]
 
 <div style="width: 80%; position: fixed; bottom: 15.5%"><p>Please let us know if your company is interested in hosting or sponsoring a future meetup!</p></div>
 
@@ -48,8 +49,8 @@ background-image: url('./slides/images/slide-bg-2.png')
 background-size: contain
 ## Thank you to our sponsor!
 
-.center[<img src="./slides/images/single.png" style="width: 40%; position: relative;">]
-Learn more at https://www.singlemusic.co
+.center[<img src="./slides/images/famc.png" style="width: 50%; position: relative;">]
+We're Hiring!
 ---
 class: top
 background-image: url('./slides/images/slide-bg-2.png')
@@ -73,30 +74,25 @@ background-size: contain
 <table>
 <tbody>
   <tr>
-    <td style="vertical-align: top">September</td>
     <td style="vertical-align: top">
-      <span>December 11, 2017</span>
-      <span style="text-decoration: underline">Spring Boot Docker</span><br/>
-      <b>Speaker:</b> Joseph Taylor O'Connor and Kevin Crawley<br/>
-      <b>Topic:</b> Developing with Java Spring in Docker
+      <span>March 19th</span>
+      <span style="text-decoration: underline">Docker 5th Birthday</span><br/>
+      <b>Speaker:</b> TBA<br />
+      <b>Games / Prizes / SWAG</b><br />
+    </td>
+    <td style="vertical-align: top">
+      <span>April 16th</span>
+      <span style="text-decoration: underline">Kubernetes Intro</span><br/>
+      <b>Speaker:</b> Jason Greathouse<br/>
+      <b>Topic:</b> Getting Started with Kubernetes Workshop
     </td>
   </tr>
   <tr>
-    <td style="vertical-align: top">October</td>
     <td style="vertical-align: top">
-	<span>TBA</span>
-      <!--<span style="text-decoration: underline">Monthly Meetup</span><br />
-      <b>Speaker:</b> Jason Myers<br />
-      <b>Topic:</b> Event Streams with Amazon ECS and Lambda-->
-    </td>
-  </tr>
-  <tr>
-    <td style="vertical-align: top">November</td>
-    <td style="vertical-align: top">
-	<span>TBA</span>
-      <!--<span style="text-decoration: underline">Monthly Meetup</span><br />
-      <b>Speaker:</b> You<br />
-      <b>Topic:</b> You Tell Me-->
+      <span>May 14th</span>
+      <span style="text-decoration: underline">OpenFaaS</span><br/>
+      <b>Speaker:</b> Kevin Crawley<br />
+      <b>Topic:</b> Deep Dive into Serverless with Docker
     </td>
   </tr>
 </tbody>
@@ -111,6 +107,7 @@ background-size: contain
 
 ## Upcoming Local Conferences
 
-* Nodevember - Nov. 27-28 - CFP Closed
+* Music City Tech -- CFP Closes March 1st
+* Scenic City Summit -- CFP Closes March 16th
 
 If you're aware of any other conferences please DM @kevin on NashDev or submit a PR.

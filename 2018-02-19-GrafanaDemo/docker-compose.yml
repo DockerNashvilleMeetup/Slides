@@ -13,4 +13,4 @@ services:
       - HIGHLIGHT_SPANS=true
       - RATIO=16:9
     ports:
-      - 7498:80
+      - 7499:80
