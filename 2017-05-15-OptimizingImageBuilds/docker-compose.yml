@@ -2,9 +2,9 @@ version: '2.0'
 
 services:
   slides:
-    image: kcmastrpc/remarkjs:1.0
+    image: kcmastrpc/remarkjs:1.1
     volumes:
-      - ./index.html.tmpl:/index.html.tmpl
+      - ./tmpl:/tmpl
       - ./slides:/usr/share/nginx/html/slides
     environment:
       - DEV_MODE=true

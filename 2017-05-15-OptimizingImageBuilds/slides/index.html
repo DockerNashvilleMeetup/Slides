@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Docker Nashville Meetup</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="slides/styles.css" />
+  </head>
+  <body>
+    <script src="remark-0.14.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+      var slideshow = remark.create({
+        sourceUrl: 'slides/slides.md?' + Math.random(),
+        ratio: '16:9',
+        navigation: {
+          scroll: false,
+          touch: true,
+          click: false
+        },
+        highlightStyle: 'default',
+        highlightSpans: true,
+        highlightLines: true
+      })
+    </script>
+    <script>
+      function Get(url) {
+        jQuery.getJSON(url, function(data) {
+          document.getElementById("exchrate").textContent = data.USD.last.toFixed(2);
+        })
+      }
+      $(document).ready(function() {
+        var interval = setInterval(function() {
+          Get("https://blockchain.info/ticker?cors=true");
+        }, 5000);
+        Get("https://blockchain.info/ticker?cors=true");
+      });
+  </script>
+  </body>
+</html>
